@@ -1,30 +1,40 @@
 clear all
 clc
-par_num=48;
+par_num=24;
 par_cell=cell(1,par_num);
 for par=1:par_num
     par_cell{1,par}=par;
 end
 
+% 
+% PTCN = {'A'	'B'	'C'	'D',	'B'	'C'	'D'	'A',    	'A' 'B' 'C' 'D',    	'C'	'D'	'A'	'B',	'D'	'A'	'B'	'C';
+%         'B'	'C'	'D'	'A',	'C'	'D'	'A'	'B',    	'B' 'C' 'D' 'A',    	'D'	'A'	'B'	'C',    'A'	'B'	'C'	'D';
+%         'C'	'D'	'A'	'B',	'D'	'A'	'B'	'C',    	'C' 'D' 'A' 'B',    	'A'	'B'	'C'	'D',    'B'	'C'	'D'	'A';
+%         'D'	'A'	'B'	'C',    'A'	'B'	'C'	'D',     	'D' 'A' 'B' 'C',    	'B'	'C'	'D'	'A',    'C'	'D'	'A'	'B'};
+% PTCN = [PTCN;flip(PTCN)];
 
-PTCN = {'A'	'B'	'C'	'D',	'B'	'C'	'D'	'A',    	'A' 'B' 'C' 'D',    	'C'	'D'	'A'	'B',	'D'	'A'	'B'	'C';
-        'B'	'C'	'D'	'A',	'C'	'D'	'A'	'B',    	'B' 'C' 'D' 'A',    	'D'	'A'	'B'	'C',    'A'	'B'	'C'	'D';
-        'C'	'D'	'A'	'B',	'D'	'A'	'B'	'C',    	'C' 'D' 'A' 'B',    	'A'	'B'	'C'	'D',    'B'	'C'	'D'	'A';
-        'D'	'A'	'B'	'C',    'A'	'B'	'C'	'D',     	'D' 'A' 'B' 'C',    	'B'	'C'	'D'	'A',    'C'	'D'	'A'	'B'};
-PTCN = [PTCN;flip(PTCN)];
+ % 1 2 1
+ % 2 1 2
+ % 1 2 1
+ % 2 1 2
+ % 1 2 1
+ % 2 1 2
 
-% 原则：（1）Sham永远在中间；
+PTCN = {'A'	'B'	'C'	'D', 'C' 'D' 'A' 'B', 'A' 'B' 'C' 'D';
+              'C' 'D' 'A' 'B', 'A' 'B' 'C' 'D', 'C' 'D' 'A' 'B';
+              'A' 'B' 'C' 'D', 'C' 'D' 'A' 'B', 'A' 'B' 'C' 'D';
+              'D' 'C' 'B' 'A', 'B' 'A' 'D' 'C', 'D' 'C' 'B' 'A';
+              'B' 'A' 'D' 'C', 'D' 'C' 'B' 'A', 'B' 'A' 'D' 'C';
+              'D' 'C' 'B' 'A', 'B' 'A' 'D' 'C', 'D' 'C' 'B' 'A'};
+
+
 %       （2）左右脑相间刺激；
-LSTS = {'LI' 'RC' 'Sham' 'LC' 'RI'; % iSham
-        'RC' 'LC' 'Sham' 'RI' 'LI'; % iSham
-        'LC' 'RI' 'Sham' 'LI' 'RC'; % cSham
-        'RI' 'LI' 'Sham' 'RC' 'LC'; % cSham
-        'LI' 'RC' 'Sham' 'LC' 'RI'; % cSham
-        'RC' 'LC' 'Sham' 'RI' 'LI'; % cSham
-        'LC' 'RI' 'Sham' 'LI' 'RC'; % iSham
-        'RI' 'LI' 'Sham' 'RC' 'LC'}; % iSham
+LSTS = {'40Hz tACS' 'Sham' '4Hz tACS';
+            'Sham'  '4Hz tACS' '40Hz tACS';
+            '4Hz tACS' '40Hz tACS' 'Sham'};
+LSTS = [LSTS;flip(LSTS)];
     
-counterShams=repmat({'iSham','iSham','cSham','cSham','cSham','cSham','iSham','iSham'},1,6);
+counterShams=repmat({'Sham'},1,par_num);
 save counterShams counterShams
     
 % % LSTS = {'LI' 'RC' 'Sham' 'LC' 'RI';
@@ -42,9 +52,9 @@ save counterShams counterShams
 %         'Di' 'Id',	'Id' 'Di',  'Di' 'Id',  'Id' 'Di'};
 % IdDi = [IdDi;flip(IdDi)];
     
-BLOCKS={{'脑区'},{1,2},par_num/2;
-    {'被试'},par_cell,5;...
-    {'半球×靶点'},LSTS',4;...
+BLOCKS={{'Hand'},{'Left','Right'},par_num/2;
+    {'Subject'},par_cell,3;...
+    {'Stimulation'},LSTS',4;...
     {'PTCN'},PTCN',1};
 % 该层条件的名字，该层条件的blocks，每个block包含下一层的多少个blocks（不是level哈，因为block即便条件一样也算是不一样的block）
 % 第二列特别注意，指的是不同条件的循环顺序，以一个周期（这个周期必须平衡）为准填写。
